@@ -12,7 +12,8 @@ export const registerUser = async (req, res) => {
 
 export const getUserByIdController = async (req, res) => {
     try {
-        const user_id = req.user; 
+        const user_id = req.params.user_id;
+        console.log(user_id);
         const user = await getUserById(user_id);
         
         if (!user) {

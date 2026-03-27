@@ -14,4 +14,8 @@ app.use(express.json());
 app.use(userRoutes);
 app.use(authRoutes);
 
+app.get("/", (req, res) => {
+  res.json({ message: "API funcionando 🚀" });
+});
+
 app.listen(puerto, console.log(`Servidor corriendo en http://${host}:${puerto}`));
