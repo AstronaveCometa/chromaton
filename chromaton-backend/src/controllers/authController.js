@@ -14,7 +14,7 @@ const loginUser = async (req, res) => {
         if (!isPasswordValid) {
             return res.status(404).json({ message: "El usuario o la password es incorrecta." });
         }
-        const token = jwt.sign({ id_usuario: user.id_usuario}, process.env.SECRET_KEY, { expiresIn: '60m' });
+        const token = jwt.sign({ user_id: user.user_id}, process.env.SECRET_KEY, { expiresIn: '60m' });
         res.status(200).json({ token });
 
     } catch (error) {

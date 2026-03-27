@@ -2,8 +2,8 @@ import { createUser, getUserById } from "../models/usersModel.js";
 
 export const registerUser = async (req, res) => {
     try {
-        const { nombre, email, password } = req.body;
-        const newUser = await createUser({ nombre, email, password });
+        const { name, email, password } = req.body;
+        const newUser = await createUser({ name, email, password });
         res.status(201).json(newUser);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -12,8 +12,8 @@ export const registerUser = async (req, res) => {
 
 export const getUserByIdController = async (req, res) => {
     try {
-        const id_usuario = req.user; 
-        const user = await getUserById(id_usuario);
+        const user_id = req.user; 
+        const user = await getUserById(user_id);
         
         if (!user) {
             return res.status(404).json({ message: "Usuario no encontrado." });
