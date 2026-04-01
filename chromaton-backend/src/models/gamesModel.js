@@ -39,7 +39,18 @@ export const checkGameStatus = async (game_id) => {
     }
 };
 
-export const joinGame = async (game_id, user_id) => {
+export const checkGamePassword = async (game_id, game_password) => {
+    const query = `SELECT game_password FROM games WHERE game_id = $1`;
+    try {
+        const res = await pool.query(query, [game_id]);
+        return res.rows[0].game_password === game_password;
+    } catch (err) {
+        console.error('Error al verificar la contraseña del juego:', err);
+        throw err;
+    }
+};
+
+export const joinGame = async (game_id, user_id, game_password) => {
     // Verificar el estado del juego antes de permitir unirse
     checkGameStatus(game_id).then(status => {
         if (status !== 'waiting') {
@@ -47,6 +58,16 @@ export const joinGame = async (game_id, user_id) => {
         }
     }).catch(err => {
         console.error('Error al verificar el estado del juego:', err);
+        throw err;
+    });
+
+    // Verificar la contraseña del juego antes de permitir unirse
+    checkGamePassword(game_id, game_password).then(isValid => {
+        if (!isValid) {
+            throw new Error('Contraseña del juego incorrecta.');
+        }
+    }).catch(err => {
+        console.error('Error al verificar la contraseña del juego:', err);
         throw err;
     });
 
