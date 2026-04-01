@@ -1,6 +1,4 @@
 import bcrypt from "bcryptjs";
-import pg from 'pg';
-import dotenv from 'dotenv';
 import pool from '../../db/config.js';
 
 export const createUser = async (datos) => {

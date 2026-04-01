@@ -3,6 +3,7 @@ import express from "express";
 import dotenv from "dotenv";
 import userRoutes from "./src/routes/userRoutes.js";
 import authRoutes from "./src/routes/authRoutes.js";
+import gamesRoutes from "./src/routes/gamesRoutes.js";
 
 dotenv.config();
 const app = express();
@@ -13,6 +14,7 @@ app.use(express.json());
 
 app.use(userRoutes);
 app.use(authRoutes);
+app.use(gamesRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "API funcionando 🚀" });

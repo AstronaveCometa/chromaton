@@ -1,4 +1,4 @@
---Creación de los ENUM
+--Creaciï¿½n de los ENUM
 CREATE TYPE game_status AS ENUM ('waiting', 'playing', 'finished');
 CREATE TYPE dice_color AS ENUM ('green', 'blue', 'purple', 'red', 'orange', 'yellow', 'black', 'white');
 CREATE TYPE dice_location AS ENUM ('bag', 'secret_set', 'hand', 'rack');
@@ -19,6 +19,8 @@ status game_status NOT NULL DEFAULT 'waiting',
 current_turn_player_id INTEGER,
 round_count INTEGER DEFAULT 0,
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+game_password VARCHAR(150) NOT NULL,
+players_counter INTEGER DEFAULT 1,
 FOREIGN KEY (current_turn_player_id) REFERENCES players(player_id),
 FOREIGN KEY (host_id) REFERENCES users(user_id)
 );
