@@ -1,22 +1,23 @@
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
+import admin from "firebase-admin";
 
-dotenv.config();
+const verificarFirebaseToken = async (req, res, next) => {
+    const headerToken = req.headers.authorization;
 
-const verificarToken = (req, res, next) => {
+    if (!headerToken || !headerToken.startsWith('Bearer ')) {
+        return res.status(401).send({ message: "No autorizado" });
+    }
+
+    const idToken = headerToken.split(' ')[1];
+
     try {
-        const token = req.header("Authorization");
-        if (!token) {
-            return res.status(400).json({ message: "Acceso denegado. Token no proporcionado." });
-        }
-        const extractedToken = token.split(' ')[1];
-        const decoded = jwt.verify(extractedToken, process.env.SECRET_KEY);
-        req.user = decoded.id_usuario;
+        const decodedToken = await admin.auth().verifyIdToken(idToken);
+        
+        req.user_uid = decodedToken.uid; 
         next();
+    } catch (error) {
+        console.error("Error al verificar token de Firebase:", error);
+        res.status(403).send({ message: "Token inv√°lido o expirado" });
     }
-    catch (error) {
-        res.status(400).json({ message: "Token inv·lido." });
-    }
-}
+};
 
-export { verificarToken };
+export { verificarFirebaseToken };

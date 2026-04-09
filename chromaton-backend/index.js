@@ -2,7 +2,6 @@ import cors from "cors";
 import express from "express";
 import dotenv from "dotenv";
 import userRoutes from "./src/routes/userRoutes.js";
-import authRoutes from "./src/routes/authRoutes.js";
 import gamesRoutes from "./src/routes/gamesRoutes.js";
 
 dotenv.config();
@@ -13,7 +12,6 @@ app.use(cors());
 app.use(express.json());
 
 app.use(userRoutes);
-app.use(authRoutes);
 app.use(gamesRoutes);
 
 app.get("/", (req, res) => {

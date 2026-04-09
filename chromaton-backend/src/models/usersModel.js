@@ -1,12 +1,10 @@
-import bcrypt from "bcryptjs";
 import pool from '../../db/config.js';
 
 export const createUser = async (datos) => {
-    const { name, email, password } = datos;
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const { user_id, name, email } = datos;
     const consultaSQL = {
-        text: "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING name, email",
-        values: [name, email, hashedPassword]
+        text: "INSERT INTO users (user_id, name, email) VALUES ($1, $2, $3) RETURNING user_id, name, email",
+        values: [user_id, name, email]
     };
     const resultado = await pool.query(consultaSQL);
     return resultado.rows[0];
@@ -21,10 +19,10 @@ export const getUserByEmail = async (email) => {
     return resultado.rows[0];
 }
 
-export const getUserById = async (id_usuario) => {
+export const getUserById = async (user_id) => {
     const consultaSQL = {
         text: "SELECT * FROM users WHERE user_id = $1",
-        values: [id_usuario]
+        values: [user_id]
     };
     const resultado = await pool.query(consultaSQL);
     return resultado.rows[0];
