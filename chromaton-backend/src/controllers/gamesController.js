@@ -42,14 +42,27 @@ export const joinGameController = async (req, res) => {
 
 export const startGameController = async (req, res) => {
     const { game_id } = req.body;
-    if (!game_id) {
-        return res.status(400).json({ error: 'game_id es requerido' });
-    }
+    const requester_id = req.user_uid; // Obtenido del token de Firebase
+
     try {
-        const game = await changeGameStatus(game_id, 'playing');
-        res.json(game);
+        // 1. Buscamos el juego para ver quién es el host
+        const game = await getGameById(game_id);
+        
+        if (!game) return res.status(404).json({ error: 'Juego no encontrado' });
+
+        // 2. Validación de Ciberseguridad: ¿Es el host quien pide iniciar?
+        if (game.host_id !== requester_id) {
+            return res.status(403).json({ error: 'Solo el anfitrión puede iniciar la partida' });
+        }
+
+        // 3. Cambiamos el estado a 'playing'
+        const updatedGame = await changeGameStatus(game_id, 'playing');
+        
+        // Aquí es donde en el futuro Socket.io dirá: "¡A jugar a todos!"
+        res.json({ message: 'Partida iniciada', game: updatedGame });
+
     } catch (err) {
-        res.status(500).json({ error: 'Error al cambiar el estado del juego' });
+        res.status(500).json({ error: 'Error al iniciar la partida' });
     }
 };
 

@@ -71,11 +71,6 @@ export const joinGame = async (game_id, user_id, game_password) => {
 
 export const changeGameStatus = async (game_id, new_status) => {
     const query = `UPDATE games SET status = $1 WHERE game_id = $2 RETURNING *`;
-    try {
-        const res = await pool.query(query, [new_status, game_id]);
-        return res.rows[0];
-    } catch (err) {
-        console.error('Error al cambiar el estado del juego:', err);
-        throw err;
-    }
+    const res = await pool.query(query, [new_status, game_id]);
+    return res.rows[0];
 };
