@@ -19,7 +19,7 @@ CREATE TABLE games (
     current_turn_player_id INTEGER,
     round_count INTEGER DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    game_password VARCHAR(150), -- ¿Sigue siendo necesaria? (Opcional)
+    game_password VARCHAR(150),
     players_counter INTEGER DEFAULT 1,
     FOREIGN KEY (current_turn_player_id) REFERENCES players(player_id),
     FOREIGN KEY (host_id) REFERENCES users(user_id)
@@ -35,6 +35,11 @@ CREATE TABLE players (
     FOREIGN KEY (game_id) REFERENCES games(game_id),
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
+
+ALTER TABLE games
+ADD CONSTRAINT fk_current_turn_player_id
+FOREIGN KEY (current_turn_player_id)
+REFERENCES players(player_id);
 
 CREATE TABLE dice_instances (
     dice_instance_id SERIAL PRIMARY KEY,
