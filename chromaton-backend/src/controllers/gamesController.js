@@ -1,18 +1,16 @@
 import { createGame, getGameById, joinGame, changeGameStatus } from '../models/gamesModel.js';
 
 export const createGameController = async (req, res) => {
-    const { host_id, game_password } = req.body;
-    if (!host_id) {
-        return res.status(400).json({ error: 'host_id es requerido' });
-    }
-    if (!game_password) {
-        return res.status(400).json({ error: 'game_password es requerido' });
-    }
+    const { game_password } = req.body;
+    const host_id = req.user_uid; // Acá se obtiene la identidad protegida por Firebase Middleware
+
+    if (!game_password) return res.status(400).json({ error: 'La contraseña es requerida' });
+
     try {
         const game = await createGame({ host_id, game_password });
         res.status(201).json(game);
     } catch (err) {
-        res.status(500).json({ error: 'Error al crear el juego 😱' });
+        res.status(500).json({ error: 'Error al crear el juego' });
     }
 };
 
@@ -31,21 +29,14 @@ export const getGameByIdController = async (req, res) => {
 };
 
 export const joinGameController = async (req, res) => {
-    const { game_id, user_id, game_password } = req.body;
-    if (!game_id) {
-        return res.status(400).json({ error: 'game_id es requerido' });
-    }
-    if (!user_id) {
-        return res.status(400).json({ error: 'user_id es requerido' });
-    }
-    if (!game_password) {
-        return res.status(400).json({ error: 'game_password es requerido' });
-    }
+    const { game_id, game_password } = req.body;
+    const user_id = req.user_uid; // Identidad protegida
+
     try {
         const game = await joinGame(game_id, user_id, game_password);
         res.json(game);
     } catch (err) {
-        res.status(500).json({ error: 'Error al unirse al juego 😱' });
+        res.status(400).json({ error: err.message });
     }
 };
 

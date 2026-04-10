@@ -3,17 +3,18 @@ import { createPlayer } from './playersModel.js';
 
 export const createGame = async (datos) => {
     const { host_id, game_password } = datos;
-
     const query = `
-        INSERT INTO games (host_id, game_password, status, current_turn_player_id, round_count) VALUES ($1, $2, $3, $4, $5) RETURNING *`;
+        INSERT INTO games (host_id, game_password, status, current_turn_player_id, round_count) 
+        VALUES ($1, $2, $3, $4, $5) RETURNING *`;
     const values = [host_id, game_password, 'waiting', null, 0];
-    try {
-        const res = await pool.query(query, values);
-        return res.rows[0];
-    } catch (err) {
-        console.error('Error al crear el juego 😱:', err);
-        throw err;
-    }
+    
+    const res = await pool.query(query, values);
+    const game = res.rows[0];
+
+    // El host también es el primer jugador
+    await createPlayer({ game_id: game.game_id, user_id: host_id });
+    
+    return game;
 };
 
 export const getGameById = async (game_id) => {
@@ -51,39 +52,21 @@ export const checkGamePassword = async (game_id, game_password) => {
 };
 
 export const joinGame = async (game_id, user_id, game_password) => {
-    // Verificar el estado del juego antes de permitir unirse
-    checkGameStatus(game_id).then(status => {
-        if (status !== 'waiting') {
-            throw new Error('No se puede unir al juego, el juego ya ha comenzado o ha terminado.');
-        }
-    }).catch(err => {
-        console.error('Error al verificar el estado del juego:', err);
-        throw err;
-    });
+    // 1. Obtener datos del juego para validar
+    const game = await getGameById(game_id);
+    if (!game) throw new Error('El juego no existe.');
 
-    // Verificar la contraseña del juego antes de permitir unirse
-    checkGamePassword(game_id, game_password).then(isValid => {
-        if (!isValid) {
-            throw new Error('Contraseña del juego incorrecta.');
-        }
-    }).catch(err => {
-        console.error('Error al verificar la contraseña del juego:', err);
-        throw err;
-    });
+    // 2. Validaciones secuenciales
+    if (game.status !== 'waiting') throw new Error('El juego ya ha comenzado.');
+    if (game.game_password !== game_password) throw new Error('Contraseña incorrecta.');
 
-    //Incrementar el número de jugadores en el juego
-    const query = `UPDATE games SET players_counter = players_counter + 1 WHERE game_id = $1 RETURNING *`;
-    try {
-        const res = await pool.query(query, [game_id]);
-
-        //Crear un nuevo jugador en la tabla players
-        const player = await createPlayer({game_id, user_id});
-        console.log('Jugador creado:', player);
-        return res.rows[0];
-    } catch (err) {
-        console.error('Error al incrementar número de jugadores:', err);
-        throw err;
-    }
+    // 3. Lógica de unión (Transacción recomendada aquí en el futuro)
+    const updateQuery = `UPDATE games SET players_counter = players_counter + 1 WHERE game_id = $1 RETURNING *`;
+    const res = await pool.query(updateQuery, [game_id]);
+    
+    await createPlayer({ game_id, user_id });
+    
+    return res.rows[0];
 };
 
 export const changeGameStatus = async (game_id, new_status) => {

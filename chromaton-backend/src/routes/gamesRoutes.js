@@ -6,13 +6,14 @@ import {
     endGameController
 } from '../controllers/gamesController.js';
 import express from 'express';
+import { verificarFirebaseToken } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.post('/games/create', createGameController);
-router.get('/games/:game_id', getGameByIdController);
-router.post('/games/join', joinGameController);
-router.post('/games/start', startGameController);
-router.post('/games/end', endGameController);
+router.post('/games/create', verificarFirebaseToken, createGameController);
+router.get('/games/:game_id', verificarFirebaseToken, getGameByIdController);
+router.post('/games/join', verificarFirebaseToken, joinGameController);
+router.post('/games/start', verificarFirebaseToken, startGameController);
+router.post('/games/end', verificarFirebaseToken, endGameController);
 
 export default router;
