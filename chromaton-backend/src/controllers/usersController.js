@@ -2,12 +2,13 @@ import { createUser, getUserById } from "../models/usersModel.js";
 
 export const registerUser = async (req, res) => {
     try {
-        const { name, email } = req.body;
+        const { name, email } = req.body; 
         const user_id = req.user_uid;
 
         const newUser = await createUser({ user_id, name, email });
         res.status(201).json(newUser);
     } catch (error) {
+        console.error("Error en el registro:", error);
         res.status(500).json({ error: error.message });
     }
 }
