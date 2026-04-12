@@ -1,4 +1,4 @@
-import { createPlayer } from "../models/playersModel";
+import { createPlayer, getPlayersByGameId } from "../models/playersModel";
 
 export const createPlayerController = async (req, res) => {
     const { game_id, user_id } = req.body;
@@ -13,5 +13,18 @@ export const createPlayerController = async (req, res) => {
         res.status(201).json(player);
     } catch (err) {
         res.status(500).json({ error: 'Error al crear el jugador 😱' });
+    }
+};
+
+export const getPlayersByGameIdController = async (req, res) => {
+    const { game_id } = req.params;
+    if (!game_id) {
+        return res.status(400).json({ error: 'game_id es requerido' });
+    }
+    try {
+        const players = await getPlayersByGameId(game_id);
+        res.status(200).json(players);
+    } catch (err) {
+        res.status(500).json({ error: 'Error al obtener los jugadores del juego 😱' });
     }
 };
