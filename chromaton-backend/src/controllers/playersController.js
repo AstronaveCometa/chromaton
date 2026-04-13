@@ -1,4 +1,4 @@
-import { createPlayer, getPlayersByGameId } from "../models/playersModel";
+import { createPlayer, getPlayersByGameId } from "../models/playersModel.js";
 
 export const createPlayerController = async (req, res) => {
     const { game_id, user_id } = req.body;

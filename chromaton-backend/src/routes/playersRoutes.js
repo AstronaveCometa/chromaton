@@ -1,4 +1,4 @@
-import {  createPlayerController, getPlayersByGameIdController } from "../controllers/playersController";
+import {  getPlayersByGameIdController } from "../controllers/playersController.js";
 import express from 'express';
 
 const router = express.Router();
