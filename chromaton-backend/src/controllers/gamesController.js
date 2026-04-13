@@ -30,7 +30,7 @@ export const getGameByIdController = async (req, res) => {
 
 export const joinGameController = async (req, res) => {
     const { game_id, game_password } = req.body;
-    const user_id = req.user_uid; // Identidad protegida
+    const user_id = req.user_uid;
 
     try {
         const game = await joinGame(game_id, user_id, game_password);

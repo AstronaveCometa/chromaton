@@ -1,5 +1,5 @@
 import pool from '../../db/config.js';
-import { createPlayer } from './playersModel.js';
+import { createPlayer, getPlayersByGameId } from './playersModel.js';
 
 export const createGame = async (datos) => {
     const { host_id, game_password } = datos;
@@ -7,13 +7,13 @@ export const createGame = async (datos) => {
         INSERT INTO games (host_id, game_password, status, current_turn_player_id, round_count) 
         VALUES ($1, $2, $3, $4, $5) RETURNING *`;
     const values = [host_id, game_password, 'waiting', null, 0];
-    
+
     const res = await pool.query(query, values);
     const game = res.rows[0];
 
     // El host también es el primer jugador
     await createPlayer({ game_id: game.game_id, user_id: host_id });
-    
+
     return game;
 };
 
@@ -60,12 +60,13 @@ export const joinGame = async (game_id, user_id, game_password) => {
     if (game.status !== 'waiting') throw new Error('El juego ya ha comenzado.');
     if (game.game_password !== game_password) throw new Error('Contraseña incorrecta.');
 
-    // 3. Lógica de unión (Transacción recomendada aquí en el futuro)
-    const updateQuery = `UPDATE games SET players_counter = players_counter + 1 WHERE game_id = $1 RETURNING *`;
-    const res = await pool.query(updateQuery, [game_id]);
-    
-    await createPlayer({ game_id, user_id });
-    
+    const existingPlayer = await getPlayersByGameId(game_id);
+    if (!existingPlayer.some(player => player.user_id === user_id)) {
+        await createPlayer({ game_id, user_id });
+        const updateQuery = `UPDATE games SET players_counter = players_counter + 1 WHERE game_id = $1 RETURNING *`;
+        const res = await pool.query(updateQuery, [game_id]);
+    }
+
     return res.rows[0];
 };
 
