@@ -3,6 +3,7 @@ import express from "express";
 import dotenv from "dotenv";
 import userRoutes from "./src/routes/userRoutes.js";
 import gamesRoutes from "./src/routes/gamesRoutes.js";
+import playersRoutes from "./src/routes/playersRoutes.js";
 import admin from "firebase-admin";
 
 admin.initializeApp({
@@ -23,6 +24,7 @@ app.use(express.json());
 
 app.use(userRoutes);
 app.use(gamesRoutes);
+app.use(playersRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "API funcionando 🚀" });
