@@ -52,22 +52,26 @@ export const checkGamePassword = async (game_id, game_password) => {
 };
 
 export const joinGame = async (game_id, user_id, game_password) => {
-    // 1. Obtener datos del juego para validar
+    // 1. Obtener datos del juego
     const game = await getGameById(game_id);
     if (!game) throw new Error('El juego no existe.');
 
-    // 2. Validaciones secuenciales
+    // 2. Validaciones
     if (game.status !== 'waiting') throw new Error('El juego ya ha comenzado.');
     if (game.game_password !== game_password) throw new Error('Contraseña incorrecta.');
 
-    const existingPlayer = await getPlayersByGameId(game_id);
-    if (!existingPlayer.some(player => player.user_id === user_id)) {
+    const existingPlayers = await getPlayersByGameId(game_id);
+    
+    // Si el jugador NO está en la lista, lo agregamos
+    if (!existingPlayers.some(player => player.user_id === user_id)) {
         await createPlayer({ game_id, user_id });
         const updateQuery = `UPDATE games SET players_counter = players_counter + 1 WHERE game_id = $1 RETURNING *`;
-        const res = await pool.query(updateQuery, [game_id]);
+        const updateRes = await pool.query(updateQuery, [game_id]);
+        return updateRes.rows[0]; // Retornamos el juego actualizado
     }
 
-    return res.rows[0];
+    // Si el jugador YA ESTABA (ej. se le cerró la app y volvió a entrar), retornamos el juego actual
+    return game;
 };
 
 export const changeGameStatus = async (game_id, new_status) => {

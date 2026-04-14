@@ -1,0 +1,5 @@
+//getHandByPlayerId(player_id)
+//getSecretCodeByPlayerId(player_id)
+//getHitsByPlayerId(player_id)
+//getBagByGameId(game_id)
+//createDiceInstancesForGameId(game_id)

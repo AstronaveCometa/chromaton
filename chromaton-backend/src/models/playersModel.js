@@ -28,3 +28,8 @@ export const getPlayersByGameId = async (game_id) => {
         throw err;
     }
 };
+
+//getPlayerById(player_id)
+//getTurnsByGameId(game_id)
+//dealSecretDicesForPlayer(game_id, player_id)
+//dealHandForPlayer(game_id, player_id), drawDiceFromBag(game_id, player_id), attack(game_id, player_id), shuffleDices(dice_set), compareDiceSets(attacker_dice_set, defender_dice_set), setHits(dice_instance_id), isPlayerDead(game_id, player_id), isGameFinished(game_id), setWinner(player_id), setPlayerDead(player_id)
