@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "307716418482",
+    "project_id": "chromaton-database",
+    "storage_bucket": "chromaton-database.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:307716418482:android:87ad1390c1a681663652ab",
+        "android_client_info": {
+          "package_name": "com.astronave.chromaton"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "307716418482-3qemvgd0236u6c5cpf4dvl2e469ricg8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.astronave.chromaton",
+            "certificate_hash": "c40628d595169c7c6790d10fe4f33a8b52c3dfa2"
+          }
+        },
+        {
+          "client_id": "307716418482-cphk9efqn81knhp6v2fet13i98luvo4v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAZ2hl4jWuedAfiP7-g683j9qzU-KlaLU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "307716418482-cphk9efqn81knhp6v2fet13i98luvo4v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

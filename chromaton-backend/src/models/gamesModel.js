@@ -79,3 +79,6 @@ export const changeGameStatus = async (game_id, new_status) => {
     const res = await pool.query(query, [new_status, game_id]);
     return res.rows[0];
 };
+
+//isGameFinished(game_id)
+//setWinner(player_id)
