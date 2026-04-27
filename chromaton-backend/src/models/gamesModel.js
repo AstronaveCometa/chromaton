@@ -1,5 +1,6 @@
 import pool from '../../db/config.js';
 import { createPlayer, getPlayersByGameId } from './playersModel.js';
+import { createDices } from '../utils/dicesUtils.js';
 
 export const createGame = async (datos) => {
     const { host_id, game_password } = datos;
@@ -78,6 +79,46 @@ export const changeGameStatus = async (game_id, new_status) => {
     const query = `UPDATE games SET status = $1 WHERE game_id = $2 RETURNING *`;
     const res = await pool.query(query, [new_status, game_id]);
     return res.rows[0];
+};
+
+export const startGameAndGenerateDices = async (game_id, playersCount) => {
+    const client = await pool.connect(); // Usamos un cliente para transacciones
+    
+    try {
+        await client.query('BEGIN'); // Iniciamos transacción
+
+        // 1. Cambiar estado del juego a 'playing' para comenzar el juego
+        await client.query(
+            `UPDATE games SET status = 'playing' WHERE game_id = $1`, 
+            [game_id]
+        );
+
+        // 2. Generar el arreglo de dados
+        const dices = createDices(playersCount);
+
+        // 3. Preparar el Bulk Insert para PostgreSQL
+        // Queremos algo como: INSERT INTO game_dices (game_id, color, location) VALUES ($1, $2, $3), ($4, $5, $6)...
+        const values = [];
+        const placeholders = dices.map((dice, i) => {
+            const offset = i * 3;
+            values.push(game_id, dice.color, dice.location);
+            return `($${offset + 1}, $${offset + 2}, $${offset + 3})`;
+        }).join(',');
+
+        const insertQuery = `
+            INSERT INTO game_dices (game_id, color, location) 
+            VALUES ${placeholders}`;
+
+        await client.query(insertQuery, values);
+
+        await client.query('COMMIT'); // Guardamos todo
+        return { success: true };
+    } catch (err) {
+        await client.query('ROLLBACK'); // Si algo falla, no se crea nada
+        throw err;
+    } finally {
+        client.release();
+    }
 };
 
 //isGameFinished(game_id)

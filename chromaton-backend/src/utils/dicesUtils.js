@@ -1,4 +1,4 @@
-const createDices = (playersCount) => {
+export const createDices = (playersCount) => {
     let dices = [];
 
     let config = {
@@ -77,7 +77,7 @@ newConfig.dicePerColor = 6;
 
         case 9:
             newConfig.dicePerColor = 6;
-            snewConfig.ecretSetDiceCount = 2;
+            newConfig.secretSetDiceCount = 2;
             newConfig.hand = 1;
             break;
         case 10:
@@ -90,9 +90,3 @@ newConfig.dicePerColor = 6;
     }
     return newConfig;
 };
-
-let dices = createDices(11);
-
-for (let i = 0; i < dices.length; i++) {
-    console.log(`dado ${i + 1}: color ${dices[i].color}, location ${dices[i].location} `);
-}

@@ -1,4 +1,4 @@
-import { createGame, getGameById, joinGame, changeGameStatus } from '../models/gamesModel.js';
+import { createGame, getGameById, joinGame, changeGameStatus, startGameAndGenerateDices } from '../models/gamesModel.js';
 
 export const createGameController = async (req, res) => {
     const { game_password } = req.body;
@@ -42,27 +42,25 @@ export const joinGameController = async (req, res) => {
 
 export const startGameController = async (req, res) => {
     const { game_id } = req.body;
-    const requester_id = req.user_uid; // Obtenido del token de Firebase
+    const requester_id = req.user_uid;
 
     try {
-        // 1. Buscamos el juego para ver quién es el host
         const game = await getGameById(game_id);
-        
         if (!game) return res.status(404).json({ error: 'Juego no encontrado' });
-
-        // 2. Validación de Ciberseguridad: ¿Es el host quien pide iniciar?
+        
         if (game.host_id !== requester_id) {
-            return res.status(403).json({ error: 'Solo el anfitrión puede iniciar la partida' });
+            return res.status(403).json({ error: 'Solo el host inicia la partida' });
         }
 
-        // 3. Cambiamos el estado a 'playing'
-        const updatedGame = await changeGameStatus(game_id, 'playing');
+        // Obtenemos cuántos jugadores hay para pasarle al generador
+        const players = await getPlayersByGameId(game_id);
         
-        // Aquí es donde en el futuro Socket.io dirá: "¡A jugar a todos!"
-        res.json({ message: 'Partida iniciada', game: updatedGame });
-
+        // Llamamos a la función "atómica" que hace todo
+        await startGameAndGenerateDices(game_id, players.length);
+        
+        res.json({ message: 'Partida iniciada y dados generados' });
     } catch (err) {
-        res.status(500).json({ error: 'Error al iniciar la partida' });
+        res.status(500).json({ error: 'Fallo al iniciar partida' });
     }
 };
 
