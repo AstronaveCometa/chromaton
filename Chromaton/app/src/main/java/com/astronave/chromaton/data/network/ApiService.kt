@@ -41,4 +41,29 @@ interface ApiService {
     suspend fun getGameById(
         @Path("game_id") gameId: Int
     ): Response<Game>
+
+    @POST("games/{game_id}/start")
+    suspend fun startGame(
+        @Header("Authorization") token: String, // Agregamos el Token aquí
+        @Path("game_id") gameId: Int
+    ): Response<Map<String, Any>>
+
+    @GET("games/{game_id}")
+    suspend fun getGameById(
+        @Header("Authorization") token: String, // El GET también está protegido en tus rutas
+        @Path("game_id") gameId: Int
+    ): Response<Game>
+
+    @GET("games/{game_id}/details")
+    suspend fun getGameDetails(
+        @Header("Authorization") token: String,
+        @Path("game_id") gameId: Int
+    ): Response<GameDetailResponse>
+
+    @POST("games/{game_id}/move")
+    suspend fun makeMove(
+        @Header("Authorization") token: String,
+        @Path("game_id") gameId: Int,
+        @Body moveData: MoveRequest
+    ): Response<Unit>
 }

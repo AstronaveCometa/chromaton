@@ -36,3 +36,18 @@ data class Game(
     val game_id: Int,
     val status: String
 )
+
+data class Dice(
+    val id: Int,
+    val color: String,
+    val value: Int?, // Es opcional porque al inicio pueden no estar lanzados
+    val position: Int?
+)
+
+data class GameDetailResponse(
+    val id: Int,
+    val status: String,
+    val currentPlayerId: String?,
+    val dices: List<Dice>,
+    val players: List<Player>
+)

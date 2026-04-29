@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- El fondo del dado con bordes redondeados -->
+    <path
+        android:fillColor="@color/dice_background"
+        android:pathData="M3,3h18v18h-18z" />
+    <!-- Punto central -->
+    <path
+        android:fillColor="@color/dice_pip_black"
+        android:pathData="M12,12m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
 
-</selector>
+    <!-- Punto inferior izquierdo -->
+    </vector>
